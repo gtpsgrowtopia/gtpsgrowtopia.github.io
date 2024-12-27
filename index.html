@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MANCA-PS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <style>
+    .modal {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .modal.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .hidden {
+      display: none;
+    }
+    /* Prevent text selection */
+    .no-select {
+      user-select: none;
+    }
+    /* Fix for ensuring Windows modal text stays visible */
+    #windowsModal pre {
+      white-space: pre-wrap; /* Ensure content wraps properly */
+      word-wrap: break-word; /* Allow long words to break and wrap */
+    }
+    /* Styling for images in buttons */
+    .logo {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <div class="flex justify-center items-center min-h-screen bg-cover bg-center" style="background-image: url('https://i.ibb.co.com/M2j56Vb/IMG-20241220-193153-518.jpg');">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg w-full">
+      <div class="bg-black rounded-t-lg p-4 text-center">
+        <h1 class="text-yellow-400 text-4xl font-bold">MANCA-PS</h1>
+      </div>
+      <div class="flex flex-col gap-4 mt-4">
+        <!-- iOS Button with Logo -->
+        <button onclick="showModal('iosModal')" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center justify-center space-x-2">
+          <img src="data:image/jpeg;base64,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" alt="iOS Logo" class="logo" />
+          <span>IOS</span>
+        </button>
+        <!-- Windows Button with Icon -->
+        <button onclick="showModal('windowsModal')" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center justify-center space-x-2">
+          <img src="data:image/png;base64,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" alt="Windows Logo" class="logo" />
+          <span>Windows</span>
+        </button>
+        <!-- Host-Go Button with Icon -->
+        <button onclick="showModal('hostGoModal')" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center justify-center space-x-2">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAgVBMVEVHcEzXUzWbU07XUjbUUDLUUDPYUzLNTy/aUjTZUTPMTjHWTzLPUCz////UVTnZUjVPVWVeZnXXVjnYSCREVWfcWTuNkJhcWGSDVVdpb31+gYy7vMGqVUf00Mn66ufsrJ/pmos/Rljif2xoptR5la6xUUDturA3P1KHbnBwue20gnyd09TYAAAADXRSTlMAtOhTNYhEF+3MYG1qxqYZnQAAAUBJREFUKJFtkuuSgjAMRmGmLa0upCRUQBZEHXV33/8BN72IMHp+cvjSNGmWrSmKIvuIkEaT1kaqtx9EDnS5j/cLIZjd1kkAN5WekYggX4ULs7iynMaTAy0WmQPQqXwxEejiVRNpWsnyRGBSL6zgsnZ8MIJMRWnm3NAfI4OPQiwsIMaGhw2cD6nwPpxIY5DnPmCDLOOpBmIzw7lm2jpJF+pqfCbrQJKAKLKC5fwu74SoWFYYJrCRIwejZOvm+a9J8meeefzoy2amYotEt8b2tW2t7XjyiBX6hmTlQffd2APTN53D8MVfRUGwXtraT6Fz8XcZ9rXI9niobRMkYtzaLlbxyfaVhDytc5HX32eyei7U3ybJa52SoJbXxRa89DQddwhf20e0kqhVtkbqW5voNo8vhvdGA8OvWmQfKIRSYh36ByJ7Jlr/k0yBAAAAAElFTkSuQmCC" alt="Host-Go Logo" class="logo" />
+          <span>Host-Go</span>
+        </button>
+        <!-- Power Tunnel Button with Icon -->
+        <button onclick="showModal('ptunnelModal')" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center justify-center space-x-2">
+          <img src="https://img.utdstc.com/icon/3d9/119/3d9119f632a430bcb59c4bbca01152c0c7b1703e649ff6caa27334f6ca967515:100" alt="Power Tunnel Logo" class="logo" />
+          <span>Power Tunnel</span>
+        </button>
+        <!-- Virtual Host Button with Icon -->
+        <button onclick="showModal('vhostModal')" class="bg-white border border-gray-300 px-4 py-2 rounded-lg flex items-center justify-center space-x-2">
+          <img src="https://www.apkshub.com/images/84/com.github.xfalcon.vhosts/icon.png" alt="Virtual host Logo" class="logo" />
+          <span>Virtual Host</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- iOS Modal -->
+  <div id="iosModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg">
+      <h2 class="text-2xl font-bold mb-4">How to Play on IOS</h2>
+      <ul class="list-decimal list-inside space-y-2">
+        <li>Download "Surge 5" from the App Store.</li>
+        <li>Tap on "Arrow Next" or after "Default.conf".</li>
+        <li>Tap on Default.</li>
+        <li>
+          Paste this text:
+          <div class="flex items-center space-x-2 mt-2">
+            <pre id="iosText" class="bg-gray-100 p-2 rounded no-select">[General]
+[Rule]
+FINAL,DIRECT
+[Host]
+www.growtopia1.com = 8.215.85.224
+www.growtopia2.com = 8.215.85.224</pre>
+            <button onclick="copyText('iosText')" class="bg-blue-500 text-white px-2 py-1 rounded-lg">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+        </li>
+        <li>Or use this link:
+          <div class="flex items-center space-x-2 mt-2">
+            <span id="iosLink" class="no-select">https://ios.gtpshost.com/mancatopia</span>
+            <button onclick="copyText('iosLink')" class="bg-blue-500 text-white px-2 py-1 rounded-lg">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+        </li>
+        <li>Press Done. (Optional): Tap on "Rename" and rename that configuration to "MANCA" to save it.</li>
+        <li>Click "Setup" and allow everything.</li>
+      </ul>
+      <button onclick="hideModal('iosModal')" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Close</button>
+    </div>
+  </div>
+
+  <!-- Windows Modal -->
+  <div id="windowsModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg">
+      <h2 class="text-2xl font-bold mb-4">How to Play on Windows</h2>
+      <ul class="list-decimal list-inside space-y-2">
+        <li>Click on the keyboard and search for notepad.</li>
+        <li>Go to "C:\Windows\System32\drivers\etc". Change "Text documents (*.txt)" to "All files".</li>
+        <li>Click "host" and click "Open". Paste this text and press "Ctrl + S".</li>
+        <li>Open growtopia app.</li>
+      </ul>
+      <div class="flex items-center space-x-2 mt-2">
+        <pre id="windowsText" class="bg-gray-100 p-2 rounded no-select">8.215.85.224 growtopia1.com
+8.215.85.224 growtopia2.com
+8.215.85.224 www.growtopia1.com
+8.215.85.224 www.growtopia2.com
+8.215.85.224 RvLnd.here</pre>
+        <button onclick="copyText('windowsText')" class="bg-blue-500 text-white px-2 py-1 rounded-lg">
+          <i class="far fa-copy"></i>
+        </button>
+      </div>
+      <button onclick="hideModal('windowsModal')" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Close</button>
+    </div>
+  </div>
+
+  <!-- Host-Go Modal -->
+  <div id="hostGoModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg">
+      <h2 class="text-2xl font-bold mb-4">How to Play on Host-Go</h2>
+      <ul class="list-decimal list-inside space-y-2">
+        <li class="flex items-center justify-between">
+          <span>Download HostGo and install the APK.</span>
+          <a href="/mnt/data/(No%20root)%20Hosts%20Go_2.1.9_APKPure.apk" download class="bg-blue-500 text-white px-3 py-2 rounded-lg">
+            <i class="fas fa-download"></i>
+          </a>
+        </li>
+        <li>Open HostGo and click "Hosts Editor".</li>
+        <li>Copy this link:
+          <div class="flex items-center space-x-2 mt-2">
+            <span id="hostGoLink">https://gtpshost.com/mancatopia.txt</span>
+            <button onclick="copyText('hostGoLink')" class="bg-blue-500 text-white px-2 py-1 rounded-lg">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+        </li>
+        <li>Click "Download and Apply".</li>
+        <li>Back and click start.</li>
+        <li>Open growtopia.</li>
+      </ul>
+      <button onclick="hideModal('hostGoModal')" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Close</button>
+    </div>
+  </div>
+
+  <!-- Power Tunnel Modal -->
+  <div id="ptunnelModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg">
+      <h2 class="text-2xl font-bold mb-4">How to Use Power Tunnel</h2>
+      <ul class="list-decimal list-inside space-y-2">
+        <li>Download the Power Tunnel app from <a href="https://powertunnel.id.uptodown.com/android/download" class="text-blue-500">here</a>.</li>
+        <li>Install the application and open it.</li>
+        <li>In the settings, paste this link:
+          <div class="flex items-center space-x-2 mt-2">
+            <span id="ptunnelLink">https://gtpshost.com/mancatopia.txt</span>
+            <button onclick="copyText('ptunnelLink')" class="bg-blue-500 text-white px-2 py-1 rounded-lg">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+        </li>
+        <li>Click connect, then run the game.</li>
+      </ul>
+      <button onclick="hideModal('ptunnelModal')" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Close</button>
+    </div>
+  </div>
+
+  <!-- Virtual Host Modal -->
+  <div id="vhostModal" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-lg">
+      <h2 class="text-2xl font-bold mb-4">How to Set Up Virtual Host</h2>
+      <ul class="list-decimal list-inside space-y-2">
+        <li>Download and configure Virtual Host from <a href="https://www.apkshub.com/app/com.github.xfalcon.vhosts" class="text-blue-500">here</a>.</li>
+        <li>Download Host File.</li>
+        <li>Open Virtual Host and click "SELECT HOST FILE".</li>
+        <li>Select the host file you just downloaded.</li>
+        <li>Click on the large white checkbox and turn it green.</li>
+        <li>Open growtopia.</li>
+      </ul>
+      <a href="data:text/plain;charset=utf-8,8.215.85.224%20growtopia1.com%0A8.215.85.224%20growtopia2.com%0A8.215.85.224%20www.growtopia1.com%0A8.215.85.224%20www.growtopia2.com%0A8.215.85.224%20RvLnd.here" download="growtopia_host_file.txt" class="bg-blue-500 text-white px-3 py-2 rounded-lg">
+        <i class="fas fa-download"></i> Download Host File
+      </a>
+      <button onclick="hideModal('vhostModal')" class="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg">Close</button>
+    </div>
+  </div>
+
+  <script>
+    function showModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.add('active');
+      }, 10);
+    }
+
+    function hideModal(id) {
+      const modal = document.getElementById(id);
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    function copyText(elementId) {
+      const textElement = document.getElementById(elementId);
+      const text = textElement.textContent || textElement.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard!");
+      });
+    }
+  </script>
+</body>
+</html>
